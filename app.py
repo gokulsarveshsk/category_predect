@@ -3,6 +3,7 @@ import joblib
 import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 import time
+import pandas as pd
 
 # Load model and vectorizer
 model = joblib.load('model.pkl')
@@ -30,15 +31,30 @@ def predict_category(query):
     return category[0], response_time
 
 # Streamlit UI
-st.title("Query Category Prediction")
+st.title("🚀 Query Category Prediction 📝")
 
-user_query = st.text_input("Enter your query:")
+user_query = st.text_input("🔍 Enter your query:")
 
 if st.button("Predict"):
     if user_query:
         category, response_time = predict_category(user_query)
-        st.write(f'The predicted category for the query "{user_query}" is "{category}".')
-        st.write(f"Response time: {response_time:.4f} seconds")
-        st.write("Status: Success")
+        
+        # Create a dataframe for the results
+        results = pd.DataFrame({
+            "Query": [user_query],
+            "Predicted Category": [category],
+            "Response Time (seconds)": [f"{response_time:.4f}"],
+            "Status": ["Success"]
+        })
+        
+        st.write("### 📊 Prediction Results")
+        st.table(results)
+        
+        # Display emojis
+        if category == "ticket_buy":
+            st.markdown("🎟️ **Ticket Buy**")
+        elif category == "trip_plan":
+            st.markdown("🗺️ **Trip Plan**")
+        
     else:
-        st.write("Please enter a query.")
+        st.write("⚠️ Please enter a query.")
